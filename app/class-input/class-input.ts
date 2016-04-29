@@ -1,10 +1,5 @@
 import {Component} from 'angular2/core';
-
-class Todo{
-    id:number;
-    text:string;
-    completed:boolean;
-}
+import {Todo} from '../models/models';
 
 
 @Component({

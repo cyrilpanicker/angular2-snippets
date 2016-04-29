@@ -1,10 +1,5 @@
 import {Component} from 'angular2/core';
-
-class Person{
-    id:number;
-    name:string;
-}
-
+import {Person} from '../models/models';
 
 @Component({
     selector:'app',

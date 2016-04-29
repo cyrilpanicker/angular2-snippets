@@ -1,4 +1,5 @@
 import {Component,Injectable} from 'angular2/core';
+import {Todo} from '../models/models';
 
 @Injectable()
 class IdGenerator{
@@ -6,11 +7,6 @@ class IdGenerator{
     next(){
         return this.id++;
     }
-}
-
-class Todo{
-    id:number;
-    text:string;
 }
 
 @Component({
@@ -34,7 +30,8 @@ export class EventBinding{
     onSubmit(inputText:string){
         this.todos.push({
             id:this._idGenerator.next(),
-            text:inputText
+            text:inputText,
+            completed:false
         });
     }
     onSelect(id:number){
