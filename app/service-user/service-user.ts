@@ -1,5 +1,11 @@
-import {Component} from 'angular2/core';
-import {SampleService} from './sample.service';
+import {Component,Injectable} from 'angular2/core';
+
+@Injectable()
+class SampleService{
+    getData(){
+        return [1,2,3,4,5];
+    }
+}
 
 @Component({
     selector:'app',

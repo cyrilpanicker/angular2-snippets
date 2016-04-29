@@ -1,6 +1,21 @@
-import {Component} from 'angular2/core';
-import {SampleChild} from './sample.child';
-import {SampleService} from './sample.service';
+import {Component,Injectable} from 'angular2/core';
+
+@Injectable()
+class SampleService{
+    getData(){
+        return [1,2,3,4,5];
+    }
+}
+
+@Component({
+    selector:'child',
+    template:'<div>Child</div>'
+})
+class SampleChild{
+    constructor(private _sampleService:SampleService){
+        console.log(this._sampleService.getData());
+    }
+}
 
 @Component({
     selector:'app',

@@ -1,5 +1,5 @@
 import {bootstrap} from 'angular2/platform/browser';
-import {ServiceUser} from './service-user/service-user';
+import {ChildUser} from './child-user/child-user';
 
 
-bootstrap(ServiceUser);
+bootstrap(ChildUser);
