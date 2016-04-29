@@ -1,5 +1,5 @@
 import {bootstrap} from 'angular2/platform/browser';
-import {ChildUser} from './child-user/child-user';
+import {ComponentStyle} from './component-style/component-style';
 
 
-bootstrap(ChildUser);
+bootstrap(ComponentStyle);
