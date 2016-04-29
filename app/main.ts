@@ -1,5 +1,5 @@
 import {bootstrap} from 'angular2/platform/browser';
-import {ComponentStyle} from './component-style/component-style';
+import {ClassInput} from './class-input/class-input';
 
 
-bootstrap(ComponentStyle);
+bootstrap(ClassInput);
