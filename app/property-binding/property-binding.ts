@@ -6,8 +6,8 @@ import {Person} from '../models/models';
     template:`
         <div>
             Child :
-            {{person.name}} :
-            <input #textBox [value]="person.name" /> :
+            {{person?.name}} :
+            <input #textBox [value]="person?.name" /> :
             <button (click)="onChange(textBox.value)" >Change</button>
         </div>
     `
