@@ -1,5 +1,5 @@
 import {bootstrap} from 'angular2/platform/browser';
-import {PropertyBinding} from './property-binding/property-binding';
+import {RouterComponent} from './router-component/router-component';
 
 
-bootstrap(PropertyBinding);
+bootstrap(RouterComponent);

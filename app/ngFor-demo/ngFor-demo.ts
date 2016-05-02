@@ -7,7 +7,7 @@ import {Person} from '../models/models';
         <div>
             <h3>Persons</h3>
             <ul>
-                <li *ngFor="#person of persons">
+                <li *ngFor="let person of persons">
                     {{person.id}}, {{person.name}}
                 </li>
             </ul>

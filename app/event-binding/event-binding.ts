@@ -17,7 +17,7 @@ class IdGenerator{
             <input #inputTextBox />
             <button (click)="onSubmit(inputTextBox.value);inputTextBox.value='';" >Submit</button>
             <ul>
-                <li *ngFor="#todo of todos" (click)="onSelect(todo.id)" >
+                <li *ngFor="let todo of todos" (click)="onSelect(todo.id)" >
                     {{todo.text}}
                 </li>
             </ul>

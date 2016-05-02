@@ -1,9 +1,13 @@
-import {Component,Injectable} from 'angular2/core';
+import {Component,Injectable,OnInit} from 'angular2/core';
 
 @Injectable()
 class SampleService{
-    getData(){
-        return [1,2,3,4,5];
+    getData():Promise<number[]>{
+        return new Promise(resolve=>{
+            setTimeout(()=>{
+                resolve([1,2,3,4,5]);
+            },2000);
+        });
     }
 }
 
@@ -12,8 +16,13 @@ class SampleService{
     template:'',
     providers:[SampleService]
 })
-export class ServiceUser{
-    constructor(private _sampleService:SampleService){
-        console.log(this._sampleService.getData());
+export class ServiceUser implements OnInit {
+    data:number[];
+    constructor(private _sampleService:SampleService){}
+    ngOnInit(){
+        this._sampleService.getData().then(data=>{
+            this.data = data;
+            console.log(this.data);
+        });
     }
 }

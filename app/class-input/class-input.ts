@@ -6,7 +6,7 @@ import {Todo} from '../models/models';
     selector:'app',
     template:`
         <ul>
-            <li *ngFor="#todo of todos"
+            <li *ngFor="let todo of todos"
                 (click)="onSelect(todo.id)"
                 [class.completed]="todo.completed" >
                 {{todo.text}}
