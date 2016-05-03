@@ -1,71 +1,145 @@
 import {Component,Injectable,OnInit} from 'angular2/core';
-import {RouteConfig,ROUTER_DIRECTIVES,ROUTER_PROVIDERS} from 'angular2/router';
+import {RouteConfig,ROUTER_DIRECTIVES,ROUTER_PROVIDERS,RouteParams,Router} from 'angular2/router';
 
-
+import {Todo} from '../models/models';
+//-------------------------------------------------
 @Injectable()
-class SampleService{
-    getData():Promise<number[]>{
+class TodoService{
+    todos:Todo[] = [
+        {id:1,text:'abc',completed:false},
+        {id:2,text:'def',completed:false},
+        {id:3,text:'ghi',completed:false},
+        {id:4,text:'jkl',completed:false},
+        {id:5,text:'mno',completed:false},
+        {id:6,text:'pqr',completed:false},
+        {id:7,text:'stu',completed:false},
+        {id:8,text:'vwx',completed:false}
+    ];
+    getTodos(){
+        return Promise.resolve(this.todos);
+    }
+    toggleTodo(id){
         return new Promise(resolve=>{
-            setTimeout(()=>{
-                resolve([1,2,3,4,5]);
-            },2000);
-        });
+            const todo = this.todos.find(todo=>todo.id===id);
+            todo.completed = !todo.completed;
+            resolve();
+        }); 
     }
 }
-
+//-------------------------------------------------
 @Component({
-    selector:'view1',
-    directives:[ROUTER_DIRECTIVES],
+    styles:[`
+        .todo-item{
+            cursor:pointer;
+        }
+        .completed{
+            text-decoration: line-through;
+        }
+    `],
     template:`
-        <div>
-            {{title}}<br/>
-            <a [routerLink]="['View2']">Go to View2</a>
+        <ul>
+            <li *ngFor="let todo of todos" class="todo-item" (click)="toggleTodo(todo.id)" [class.completed]="todo.completed" >
+                {{todo.text}}
+                <button (click)="goToDetail(todo.id);$event.stopPropagation();" >Edit</button>
+            </li>
+        </ul>
+    `
+})
+class AllTodos implements OnInit {
+    todos:Todo[];
+    constructor(
+        private _todoService:TodoService,
+        private _router:Router
+    ){}
+    ngOnInit(){
+        this._todoService.getTodos().then(todos => this.todos=todos);
+    }
+    toggleTodo(id){
+        this._todoService.toggleTodo(id);
+    }
+    goToDetail(id:number){
+        this._router.navigate(['TodoDetails',{id}]);
+    }
+}
+//-------------------------------------------------
+@Component({
+    styles:[`
+        .todo-item{
+            cursor:pointer;
+        }
+    `],
+    template:`
+        <ul>
+            <li *ngFor="let todo of todos" class="todo-item" (click)="toggleTodo(todo.id)" >
+                {{todo.text}}
+                <button (click)="goToDetail(todo.id);$event.stopPropagation();" >Edit</button>
+            </li>
+        </ul>
+    `
+})
+class PendingTodos implements OnInit {
+    todos:Todo[];
+    constructor(
+        private _todoService:TodoService,
+        private _router:Router
+    ){}
+    updateTodos(){
+        this.todos = this.todos.filter(todo=>!todo.completed);
+    }
+    ngOnInit(){
+        this._todoService.getTodos().then(todos => this.todos = todos.filter(todo=>!todo.completed));
+    }
+    toggleTodo(id){
+        this._todoService.toggleTodo(id).then(this.updateTodos.bind(this));
+    }
+    goToDetail(id:number){
+        this._router.navigate(['TodoDetails',{id}])
+    }
+}
+//-------------------------------------------------
+@Component({
+    template:`
+        <div *ngIf="todo">
+            <h2>Details</h2>
+            id : {{todo?.id}}<br/>
+            text : <input [(ngModel)]="todo.text" /><br/>
+            complete : <input [(ngModel)]="todo.completed" type="checkbox" /><br/>
+            <button (click)="goBack()" >Back</button>
         </div>
     `
 })
-class View1 implements OnInit {
-    title='View1';
-    constructor(private _sampleService:SampleService){}
+class TodoDetails implements OnInit {
+    todo:Todo;
+    constructor(
+        private _todoService:TodoService,
+        private _routeParams:RouteParams
+    ){}
     ngOnInit(){
-        this._sampleService.getData().then(data=>{
-            console.log('VIEW1 : '+data);
+        const id = parseInt(this._routeParams.get('id'));
+        this._todoService.getTodos().then(todos=>{
+            this.todo = todos.find(todo=>todo.id===id);
         });
     }
-}
-
-@Component({
-    selector:'view2',
-    directives:[ROUTER_DIRECTIVES],
-    template:`
-        <div>
-            {{title}}<br/>
-            <a [routerLink]="['View1']">Go to View1</a>
-        </div>
-    `
-})
-class View2 implements OnInit {
-    title='View2';
-    constructor(private _sampleService:SampleService){}
-    ngOnInit(){
-        this._sampleService.getData().then(data=>{
-            console.log('VIEW2 : '+data);
-        });
+    goBack(){
+        window.history.back();
     }
 }
-
-
-
+//-------------------------------------------------
 @Component({
     selector:'app',
+    providers:[ROUTER_PROVIDERS,TodoService],
     directives:[ROUTER_DIRECTIVES],
-    providers:[ROUTER_PROVIDERS,SampleService],
     template:`
-        Parent View
+        <h2>Todo App</h2>
+        <a [routerLink]="['AllTodos']" >All Todos</a>
+        <a [routerLink]="['PendingTodos']" >Pending Todos</a>
         <router-outlet></router-outlet>
     `
 })
 @RouteConfig([
-    {path:'/view1',name:'View1',component:View1,useAsDefault:true},
-    {path:'/view2',name:'View2',component:View2}
+    {path:'/alltodos',name:'AllTodos',component:AllTodos,useAsDefault:true},
+    {path:'/pendingtodos',name:'PendingTodos',component:PendingTodos},
+    {path:'/tododetails/:id',name:'TodoDetails',component:TodoDetails}
 ])
-export class RouterComponent{}
+export class App{}
+//-------------------------------------------------
