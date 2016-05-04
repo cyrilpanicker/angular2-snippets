@@ -1,11 +1,10 @@
-import {Component,Injectable,OnInit} from 'angular2/core';
-import {RouteConfig,ROUTER_DIRECTIVES,ROUTER_PROVIDERS,RouteParams,Router} from 'angular2/router';
-
+import {Component,Injectable,OnInit} from '@angular/core';
+import {RouteConfig,Router,ROUTER_PROVIDERS,ROUTER_DIRECTIVES,RouteParams} from '@angular/router-deprecated'
 import {Todo} from '../models/models';
-//-------------------------------------------------
+//------------------------------------------------------
 @Injectable()
 class TodoService{
-    todos:Todo[] = [
+    private _todos:Todo[] = [
         {id:1,text:'abc',completed:false},
         {id:2,text:'def',completed:false},
         {id:3,text:'ghi',completed:false},
@@ -13,32 +12,30 @@ class TodoService{
         {id:5,text:'mno',completed:false},
         {id:6,text:'pqr',completed:false},
         {id:7,text:'stu',completed:false},
-        {id:8,text:'vwx',completed:false}
+        {id:8,text:'vwx',completed:false},
+        {id:9,text:'yza',completed:false}
     ];
     getTodos(){
-        return Promise.resolve(this.todos);
-    }
-    toggleTodo(id){
-        return new Promise(resolve=>{
-            const todo = this.todos.find(todo=>todo.id===id);
-            todo.completed = !todo.completed;
-            resolve();
-        }); 
+        return Promise.resolve(this._todos);
     }
 }
-//-------------------------------------------------
+//------------------------------------------------------
 @Component({
     styles:[`
+        .completed{
+            text-decoration:line-through;
+        }
         .todo-item{
             cursor:pointer;
-        }
-        .completed{
-            text-decoration: line-through;
         }
     `],
     template:`
         <ul>
-            <li *ngFor="let todo of todos" class="todo-item" (click)="toggleTodo(todo.id)" [class.completed]="todo.completed" >
+            <li *ngFor="let todo of todos" 
+                (click)="toggleTodo(todo.id)" 
+                [class.completed]="todo.completed"
+                class="todo-item" 
+            >
                 {{todo.text}}
                 <button (click)="goToDetail(todo.id);$event.stopPropagation();" >Edit</button>
             </li>
@@ -52,58 +49,23 @@ class AllTodos implements OnInit {
         private _router:Router
     ){}
     ngOnInit(){
-        this._todoService.getTodos().then(todos => this.todos=todos);
+        this._todoService.getTodos().then(todos=>this.todos=todos);
     }
-    toggleTodo(id){
-        this._todoService.toggleTodo(id);
+    toggleTodo(id:number){
+        const todo = this.todos.find(todo=>todo.id===id);
+        todo.completed = !todo.completed;
     }
     goToDetail(id:number){
         this._router.navigate(['TodoDetails',{id}]);
     }
 }
-//-------------------------------------------------
-@Component({
-    styles:[`
-        .todo-item{
-            cursor:pointer;
-        }
-    `],
-    template:`
-        <ul>
-            <li *ngFor="let todo of todos" class="todo-item" (click)="toggleTodo(todo.id)" >
-                {{todo.text}}
-                <button (click)="goToDetail(todo.id);$event.stopPropagation();" >Edit</button>
-            </li>
-        </ul>
-    `
-})
-class PendingTodos implements OnInit {
-    todos:Todo[];
-    constructor(
-        private _todoService:TodoService,
-        private _router:Router
-    ){}
-    updateTodos(){
-        this.todos = this.todos.filter(todo=>!todo.completed);
-    }
-    ngOnInit(){
-        this._todoService.getTodos().then(todos => this.todos = todos.filter(todo=>!todo.completed));
-    }
-    toggleTodo(id){
-        this._todoService.toggleTodo(id).then(this.updateTodos.bind(this));
-    }
-    goToDetail(id:number){
-        this._router.navigate(['TodoDetails',{id}])
-    }
-}
-//-------------------------------------------------
+//------------------------------------------------------
 @Component({
     template:`
-        <div *ngIf="todo">
-            <h2>Details</h2>
-            id : {{todo?.id}}<br/>
+        <div *ngIf="todo" >
+            id : {{todo.id}}<br/>
             text : <input [(ngModel)]="todo.text" /><br/>
-            complete : <input [(ngModel)]="todo.completed" type="checkbox" /><br/>
+            completed : <input [(ngModel)]="todo.completed" type="checkbox" /><br/>
             <button (click)="goBack()" >Back</button>
         </div>
     `
@@ -117,29 +79,79 @@ class TodoDetails implements OnInit {
     ngOnInit(){
         const id = parseInt(this._routeParams.get('id'));
         this._todoService.getTodos().then(todos=>{
-            this.todo = todos.find(todo=>todo.id===id);
+            return todos.find(todo=>todo.id===id);
+        }).then(todo=>{
+            this.todo = todo;
         });
     }
     goBack(){
         window.history.back();
     }
 }
-//-------------------------------------------------
+//------------------------------------------------------
+@Component({
+    styles:[`
+        .todo-item{
+            cursor:pointer;
+        }
+    `],
+    template:`
+        <ul>
+            <li *ngFor="let todo of todos" 
+                (click)="toggleTodo(todo.id)"
+                class="todo-item"
+            >
+                {{todo.text}}
+                <button (click)="goToDetail(todo.id);$event.stopPropagation();" >Edit</button>
+            </li>
+        </ul>
+    `
+})
+class PendingTodos implements OnInit {
+    todos:Todo[];
+    constructor(
+        private _todoService:TodoService,
+        private _router:Router
+    ){}
+    ngOnInit(){
+        this._todoService.getTodos().then(todos=>{
+            this.todos = todos.filter(todo=>todo.completed===false);
+        });
+    }
+    toggleTodo(id:number){
+        const todo = this.todos.find(todo=>todo.id===id);
+        todo.completed = !todo.completed;
+        this._todoService.getTodos().then(todos=>{
+            this.todos = todos.filter(todo=>todo.completed===false);
+        });
+    }
+    goToDetail(id:number){
+        this._router.navigate(['TodoDetails',{id}]);
+    }
+}
+//------------------------------------------------------
 @Component({
     selector:'app',
     providers:[ROUTER_PROVIDERS,TodoService],
     directives:[ROUTER_DIRECTIVES],
+    styles:[`
+        .router-link-active{
+            color:red;
+        }
+    `],
     template:`
-        <h2>Todo App</h2>
-        <a [routerLink]="['AllTodos']" >All Todos</a>
-        <a [routerLink]="['PendingTodos']" >Pending Todos</a>
+        <h2>{{title}}</h2>
+        <a [routerLink]="['AllTodos']" >All</a>
+        <a [routerLink]="['PendingTodos']" >Pending</a>
         <router-outlet></router-outlet>
     `
 })
 @RouteConfig([
-    {path:'/alltodos',name:'AllTodos',component:AllTodos,useAsDefault:true},
-    {path:'/pendingtodos',name:'PendingTodos',component:PendingTodos},
-    {path:'/tododetails/:id',name:'TodoDetails',component:TodoDetails}
+    {name:'AllTodos',path:'alltodos',component:AllTodos,useAsDefault:true},
+    {name:'PendingTodos',path:'pendingtodos',component:PendingTodos},
+    {name:'TodoDetails',path:'tododetails/:id',component:TodoDetails}
 ])
-export class App{}
-//-------------------------------------------------
+export class App{
+    title='TodoApp';
+}
+//------------------------------------------------------

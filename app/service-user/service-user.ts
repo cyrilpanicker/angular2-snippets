@@ -1,4 +1,4 @@
-import {Component,Injectable,OnInit} from 'angular2/core';
+import {Component,Injectable,OnInit} from '@angular/core';
 
 @Injectable()
 class SampleService{
