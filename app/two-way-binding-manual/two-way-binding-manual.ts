@@ -9,17 +9,27 @@ class Hero{
     ){}
 }
 
-
 @Component({
     selector:'app',
     template:`
         <form>
-            Name : <input [(ngModel)]="model.name" required /><br/>
-            Alter Ego : <input [(ngModel)]="model.alterEgo" /><br/>
+            Name : 
+            <input #nameTextBox [value]="model.name" required
+                (keyup)="model.name=nameTextBox.value"
+            />
+            <br/>
+            Alter Ego :
+            <input #egoTextBox [value]="model.alterEgo"
+                (keyup)="model.alterEgo=egoTextBox.value" 
+            />
+            <br/>
             Power : 
-            <select [(ngModel)]="model.power" >
-                <option *ngFor="let power of powers"
-                    [value]="power"
+            <select #powerSelectBox required
+                (change)="model.power=powerSelectBox.value"
+            >
+                <option *ngFor="let power of powers" 
+                    [value]="power" 
+                    [selected]="power===model.power"
                 >
                     {{power}}
                 </option>
@@ -33,7 +43,7 @@ class Hero{
     `
 })
 export class App{
-    model:Hero=new Hero(18, 'Dr IP', 'Weather Changer', 'Chuck Overstreet');
+    model:Hero=new Hero(18, 'Dr IQ', 'Weather Changer', 'Chuck Overstreet');
     powers=['Really Smart', 'Super Flexible','Super Hot', 'Weather Changer'];
     submitted=false;
     submitForm(){
