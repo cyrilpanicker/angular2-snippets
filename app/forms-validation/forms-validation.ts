@@ -110,7 +110,7 @@ export class App6{
             <span [hidden]="formControl.form.controls.inputControl && (formControl.form.controls.inputControl.valid || formControl.form.controls.inputControl.pristine)">Required Field, </span>
             {{inputTextbox.className}}
             <button [disabled]="formControl.form.controls.inputControl && !formControl.form.controls.inputControl.valid" (click)="submitForm()" >Submit</button>
-        </form>
+        </div>
     `
 })
 export class App7{

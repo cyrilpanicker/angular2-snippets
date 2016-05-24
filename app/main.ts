@@ -1,4 +1,4 @@
 import {bootstrap} from '@angular/platform-browser-dynamic';
-import {App5} from './forms-demo/forms-demo';
+import {App7} from './forms-validation/forms-validation';
 
-bootstrap(App5);
+bootstrap(App7);
