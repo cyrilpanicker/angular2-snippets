@@ -16,7 +16,7 @@ export class App1{
         console.log('form submitted');
     }
 }
-//-------------------------------------------------
+//------------------------------------------------
 @Component({
     selector:'app',
     template:`
