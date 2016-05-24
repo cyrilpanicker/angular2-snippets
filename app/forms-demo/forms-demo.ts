@@ -1,42 +1,88 @@
 import {Component} from '@angular/core';
 
+@Component({
+    selector:'app',
+    template:`
+        <form (ngSubmit)="submitForm()" >
+            <input ngControl #inputTextbox #inputControl="ngForm" required />
+            <span [hidden]="inputControl.valid || inputControl.pristine" >Required Field, </span>
+            {{inputTextbox.className}}
+            <button [disabled]="!inputControl.valid" >Submit</button>
+        </form>
+    `
+})
+export class App1{
+    submitForm(){
+        console.log('form submitted');
+    }
+}
+//-------------------------------------------------
+@Component({
+    selector:'app',
+    template:`
+        <div ngForm>
+            <input ngControl #inputTextbox #inputControl="ngForm" required />
+            <span [hidden]="inputControl.valid || inputControl.pristine" >Required Field, </span>
+            {{inputTextbox.className}}
+            <button [disabled]="!inputControl.valid" (click)="submitForm()" >Submit</button>
+        </div>
+    `
+})
+export class App2{
+    submitForm(){
+        console.log('form submitted');
+    }
+}
+//-------------------------------------------------
+@Component({
+    selector:'app',
+    template:`
+        <div>
+            <input [ngModel]="inputTextbox.value" #inputTextbox #inputControl="ngForm" required />
+            <span [hidden]="inputControl.valid || inputControl.pristine" >Required Field, </span>
+            {{inputTextbox.className}}
+            <button [disabled]="!inputControl.valid" (click)="submitForm()">Submit</button>
+        </div>
+    `
+})
+export class App3{
+    submitForm(){
+        console.log('form submitted');
+    }
+}
+//-------------------------------------------------
+@Component({
+    selector:'app',
+    template:`
+        <form (ngSubmit)="submitForm()" #formControl="ngForm" >
+            <input ngControl #inputTextbox #inputControl="ngForm" required />
+            <span [hidden]="inputControl.valid || inputControl.pristine" >Required Field, </span>
+            {{inputTextbox.className}}
+            <button [disabled]="!formControl.valid" >Submit</button>
+        </form>
+    `
+})
+export class App4{
+    submit(){
+        console.log('submitted');
+    }
+}
+//-------------------------------------------------
 
 @Component({
     selector:'app',
     template:`
-        
-        <div ngForm #formControl2="ngForm" >
-            <input ngControl #nameTextBox1 #nameControl1="ngForm" required>
-            <span [hidden]="nameControl1.valid || nameControl1.pristine" >
-                Required Field,
-            </span>
-            {{nameTextBox1.className}}
-            <button (click)="submit()" [disabled]="!formControl2.valid" >Submit</button>
-        </div>
-        
-        <div ngForm #formControl2="ngForm" >
-            <input ngControl="" #nameTextBox1 required>
-            <span [hidden]="nameControl1.valid || nameControl1.pristine" >
-                Required Field,
-            </span>
-            {{nameTextBox1.className}}
-            <button (click)="submit()" [disabled]="!formControl.valid" >Submit</button>
-        </div>
-        
-        <div>
-            <input [(ngModel)]="name" #nameTextBox2 #nameControl2="ngForm" required />
-            <span [hidden]="nameControl2.valid || nameControl2.pristine" >
-                Required Field,
-            </span>
-            {{nameTextBox2.className}}
-            <button (click)="submit()" >Submit</button>
-        </div>
-
+        <form (ngSubmit)="submitForm()" #formControl="ngForm" >
+            <input ngControl="inputControl" #inputTextbox required />
+            <span [hidden]="formControl.form.controls.inputControl && (formControl.form.controls.inputControl.valid || formControl.form.controls.inputControl.pristine)" 
+             >Required Field, </span>
+            {{inputTextbox.className}}
+            <button [disabled]="formControl.form.controls.inputControl && !formControl.form.controls.inputControl.valid" >Submit</button>
+        </form>
     `
 })
-export class App{
-    name='tom';
-    submit(){
-        console.log('submitted');
+export class App5{
+    submitForm(){
+        console.log('form submitted');
     }
 }
